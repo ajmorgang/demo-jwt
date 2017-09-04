@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="e5cddb0f-4312-4814-8368-c58aca7eecc0" activeEnvironment="Default" name="Proyecto SoapUI Groovy" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="3198349a-84e4-409e-9880-4e3436f9b1df" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:8080" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://localhost:8080</con:endpoint></con:endpoints><con:resource name="Login" path="/login" id="20bcc9bd-e51e-4e76-8b29-413565a5a7b9"><con:settings/><con:parameters/><con:method name="Login 1" id="5ce0e8ea-047f-46a1-ae82-12bbbe3d3331" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>200</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Request 1" id="584b9210-8548-4d4d-a810-3fc6321f6c59" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080</con:endpoint><con:request>{
+    "username": "admin",
+    "password": "password"
+}</con:request><con:originalUri>http://localhost/login</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource><con:resource name="users" path="/users/" id="c5d53030-da60-4d0a-8e6a-1397c87d6c6b"><con:settings/><con:parameters/><con:method name="Listado" id="31605cb0-ccc6-4b48-8c3d-1d8e8b7950eb" method="GET"><con:settings/><con:parameters/><con:request name="Request 1" id="b3ea7998-00f4-455f-95fe-7517d7cb390c" mediaType="application/json"><con:settings/><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method><con:method name="Alta Usuario" id="67638c42-366a-4a14-b23a-f3af150a387d" method="POST"><con:settings/><con:parameters/><con:request name="Request 1" id="5349eb3b-ebe6-4fe0-b053-2d00a054f090" mediaType="application/json" postQueryString="false"><con:settings/><con:endpoint>http://localhost:8080</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:request></con:method></con:resource></con:interface><con:testSuite id="7b47e47e-deea-4b0f-975d-5ffb5361052c" name="TestSuite Demo"><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="e2c03563-732e-42ad-a305-2574077cfc57" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase Login - Success" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="HTTP Login" id="62aff047-648f-48e9-8b1a-c6b9075428a6"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="ed804620-c7a3-4777-a427-df538e4e2cf8" name="HTTP Login" postQueryString="false" mediaType="application/json " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/login</con:endpoint><con:request>{
+    "username": "admin",
+    "password": "password"
+}</con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:testStep type="groovy" name="ValidarLogin" id="2af94f78-738e-4009-a2c1-c2a9d0a561ef"><con:settings/><con:config><script>/*
+ * Accede a la petición lanzada y revisa la respuesta. 
+ * Para ello accedemos al API java que nos proporciona SOAPUI
+ * https://www.soapui.org/apidocs/index.html?overview-summary.html
+ */
+def httpResponseHeaders = context.testCase.testSteps["HTTP Login"].testRequest.response.responseHeaders
+def authorizationHeaders = httpResponseHeaders.get("Authorization")
+
+// Se valida que existe la cabecera y que incluye un token.
+assert authorizationHeaders : "No se recupera la cabecera Authorization"
+/*
+ * Cualquier array vacío, objeto a null en groovy equivale a false (esta característica se llama groovyTruth).
+ * Si authorizationHeaders NO existe se genera una excepción con el literal
+ * Podemos acceder a cualquier objecto de un array por el índice
+ */
+assert authorizationHeaders[0].startsWith("Bearer") : "No se recibe un token válido"
+</script></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="720d11a0-4edc-4362-b62f-2b3881cca1da" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="TestCase Alta Usuario - Sucess" searchProperties="true"><con:settings/><con:testStep type="httprequest" name="HTTP Login" id="12ffde83-a9b7-465d-9bbc-6dd0ab8d556b"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="ed804620-c7a3-4777-a427-df538e4e2cf8" name="HTTP Login" postQueryString="false" mediaType="application/json " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:8080/login</con:endpoint><con:request>{
+    "username": "admin",
+    "password": "password"
+}</con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:testStep type="groovy" name="Recuperar JWT" id="abf6bbae-53a1-4c96-ac7a-8772bcc53382"><con:settings/><con:config><script>def httpResponseHeaders = context.testCase.testSteps["HTTP Login"].testRequest.response.responseHeaders
+def authorizationHeaders = httpResponseHeaders.get("Authorization")
+
+// Se valida que existe la cabecera y que incluye un token.
+assert authorizationHeaders : "No se recupera la cabecera Authorization"
+
+// Se modifica la petición de alta y se incorpora el token que nos ha devuelto el login
+def headers = testRunner.testCase.testSteps["HTTP Alta Usuario"].getHttpRequest().getRequestHeaders()
+headers["Authorization"] = authorizationHeaders;
+testRunner.testCase.testSteps["HTTP Alta Usuario"].getHttpRequest().setRequestHeaders(headers)</script></con:config></con:testStep><con:testStep type="httprequest" name="HTTP Alta Usuario" id="77cd6825-7a4f-4663-ba19-8fef961f9293"><con:settings/><con:config method="POST" xsi:type="con:HttpRequest" id="d912eeda-121c-4d9b-8616-1d7889450a14" name="HTTP Alta Usuario" postQueryString="false" mediaType="application/json" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Bearer  eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1MDQ1MTI5NzIsImlzcyI6Imh0dHBzOi8vd3d3LmF1dGVudGlhLmNvbS8iLCJzdWIiOiJhZG1pbiIsImV4cCI6MTUwNTM3Njk3Mn0.HEC1t368bqAml74BptlfVxHF7gLWrkMWIAIrxQ5FO18tkVDCzIDrN_ec53QFWxQANHb2qMcQhIg9AiKyjkgwCA" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:8080/users/</con:endpoint><con:request>{
+    "username": "daenerys",
+    "password": "dracarys"
+}</con:request><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:testStep type="groovy" name="ValidarAlta" id="9077c40b-d764-4f1d-88ad-cc5894cff67f"><con:settings/><con:config><script>/*
+ * Intentamos acceder al código de la respuesta HTTP 
+ */
+def httpResponseHeaders = context.testCase.testSteps["HTTP Alta Usuario"].testRequest.response.responseHeaders
+def httpStatus = httpResponseHeaders["#status#"]
+
+// Se valida que el servicio devuelve un código HTTP 200 -> OK.
+assert httpStatus == ['HTTP/1.1 200 '] : "No ha podido dar el alta de usuario"
+</script></con:config></con:testStep><con:testStep type="groovy" name="Recuperar JWT del Login" id="bfff2cd1-df11-4de5-a4b9-9b4ddeb66d18"><con:settings/><con:config><script>def httpResponseHeaders = context.testCase.testSteps["HTTP Login"].testRequest.response.responseHeaders
+def authorizationHeaders = httpResponseHeaders.get("Authorization")
+
+// Se valida que existe la cabecera y que incluye un token.
+assert authorizationHeaders : "No se recupera la cabecera Authorization"
+
+// Se modifica la petición de alta y se incorpora el token que nos ha devuelto el login
+def headers = testRunner.testCase.testSteps["HTTP Get Usuario"].getHttpRequest().getRequestHeaders()
+headers["Authorization"] = authorizationHeaders;
+testRunner.testCase.testSteps["HTTP Get Usuario"].getHttpRequest().setRequestHeaders(headers)</script></con:config></con:testStep><con:testStep type="httprequest" name="HTTP Get Usuario" id="80c34565-6f0f-4f8d-8a1a-708b001943d3"><con:settings/><con:config method="GET" xsi:type="con:HttpRequest" id="02469534-0d86-4bea-8e3c-e81f7116bd69" name="HTTP Get Usuario" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Bearer  eyJhbGciOiJIUzUxMiJ9.eyJpYXQiOjE1MDQ1MTI5NzIsImlzcyI6Imh0dHBzOi8vd3d3LmF1dGVudGlhLmNvbS8iLCJzdWIiOiJhZG1pbiIsImV4cCI6MTUwNTM3Njk3Mn0.HEC1t368bqAml74BptlfVxHF7gLWrkMWIAIrxQ5FO18tkVDCzIDrN_ec53QFWxQANHb2qMcQhIg9AiKyjkgwCA" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:8080/users/daenerys</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters/></con:config></con:testStep><con:testStep type="groovy" name="ValidarListado" id="899f8d87-a321-4bca-a77a-695e47922726"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+/*
+ * Intentamos acceder al código de la respuesta HTTP 
+ */
+def httpResponseHeaders = context.testCase.testSteps["HTTP Get Usuario"].testRequest.response.responseHeaders
+def httpStatus = httpResponseHeaders["#status#"]
+
+// Se valida que el servicio devuelve un código HTTP 200 -> OK.
+assert httpStatus == ['HTTP/1.1 200 '] : "No ha podido recuperar el listado de usuarios"
+
+// Se recupera los datos de la respuesta
+def responseBody = context.expand('${HTTP Get Usuario#Response}')
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+// Se valida el alta
+assert jsonResponse.id : "No existe el atributo id"
+assert jsonResponse.username == "daenerys" : "El usuario no existe"
+</script></con:config></con:testStep><con:testStep type="groovy" name="Limpieza BD" id="9a907f2d-aedb-4c9f-b8f5-db53c5905706"><con:settings/><con:config><script>import groovy.sql.Sql;
+import java.sql.*;
+
+//Se establece una conexión JDBC a la BD
+def con = Sql.newInstance("jdbc:h2:tcp://localhost/~/demo-jwt", "sa","","org.h2.Driver");
+
+// Se ejecuta el comando SQL
+con.execute("DELETE FROM USUARIO WHERE USERNAME = 'daenerys'")
+
+// Se cierra la conexión
+con.close()
+</script></con:config></con:testStep><con:properties/></con:testCase><con:properties/></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/></con:soapui-project>
